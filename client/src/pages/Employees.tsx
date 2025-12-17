@@ -6,16 +6,36 @@
  * - Quick create and delete actions
  */
 
-import { useEffect, useState } from 'react';
-import MainLayout from '@/components/MainLayout';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Mail, Phone, Briefcase, Trash2, MapPin } from 'lucide-react';
-import { employeeApi, Employee, CreateEmployeeDto, branchApi, Branch, companyApi, Company } from '@/lib/api';
-import { toast } from 'sonner';
+import { useEffect, useState } from "react";
+import MainLayout from "@/components/MainLayout";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Plus, Mail, Phone, Briefcase, Trash2, MapPin } from "lucide-react";
+import {
+  employeeApi,
+  Employee,
+  CreateEmployeeDto,
+  branchApi,
+  Branch,
+  companyApi,
+  Company,
+} from "@/lib/api";
+import { toast } from "sonner";
 
 export default function Employees() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -25,11 +45,11 @@ export default function Employees() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formData, setFormData] = useState<CreateEmployeeDto>({
     branchId: 0,
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNumber: '',
-    jobTitle: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    jobTitle: "",
   });
 
   useEffect(() => {
@@ -44,12 +64,12 @@ export default function Employees() {
         branchApi.getAll(),
         companyApi.getAll(),
       ]);
-      setEmployees(employeesData);
-      setBranches(branchesData);
-      setCompanies(companiesData);
+      setEmployees(Array.isArray(employeesData) ? employeesData : []);
+      setBranches(Array.isArray(branchesData) ? branchesData : []);
+      setCompanies(Array.isArray(companiesData) ? companiesData : []);
     } catch (error) {
-      console.error('Failed to fetch data:', error);
-      toast.error('Failed to load employees');
+      console.error("Failed to fetch data:", error);
+      toast.error("Failed to load employees");
     } finally {
       setLoading(false);
     }
@@ -59,41 +79,41 @@ export default function Employees() {
     e.preventDefault();
     try {
       await employeeApi.create(formData);
-      toast.success('Employee created successfully');
+      toast.success("Employee created successfully");
       setFormData({
         branchId: 0,
-        firstName: '',
-        lastName: '',
-        email: '',
-        phoneNumber: '',
-        jobTitle: '',
+        firstName: "",
+        lastName: "",
+        email: "",
+        phoneNumber: "",
+        jobTitle: "",
       });
       setIsDialogOpen(false);
       fetchData();
     } catch (error) {
-      console.error('Failed to create employee:', error);
-      toast.error('Failed to create employee');
+      console.error("Failed to create employee:", error);
+      toast.error("Failed to create employee");
     }
   };
 
   const handleDeleteEmployee = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this employee?')) return;
+    if (!confirm("Are you sure you want to delete this employee?")) return;
     try {
       await employeeApi.delete(id);
-      toast.success('Employee deleted successfully');
+      toast.success("Employee deleted successfully");
       fetchData();
     } catch (error) {
-      console.error('Failed to delete employee:', error);
-      toast.error('Failed to delete employee');
+      console.error("Failed to delete employee:", error);
+      toast.error("Failed to delete employee");
     }
   };
 
   const getBranchInfo = (branchId: number) => {
-    const branch = branches.find((b) => b.id === branchId);
-    const company = companies.find((c) => c.id === branch?.companyId);
+    const branch = branches.find(b => b.id === branchId);
+    const company = companies.find(c => c.id === branch?.companyId);
     return {
-      branchName: branch?.name || 'Unknown Branch',
-      companyName: company?.name || 'Unknown Company',
+      branchName: branch?.name || "Unknown Branch",
+      companyName: company?.name || "Unknown Company",
     };
   };
 
@@ -121,7 +141,7 @@ export default function Employees() {
                 <label className="text-sm font-medium">Branch</label>
                 <Select
                   value={formData.branchId.toString()}
-                  onValueChange={(value) =>
+                  onValueChange={value =>
                     setFormData({ ...formData, branchId: parseInt(value) })
                   }
                 >
@@ -129,11 +149,17 @@ export default function Employees() {
                     <SelectValue placeholder="Select a branch" />
                   </SelectTrigger>
                   <SelectContent>
-                    {branches.map((branch) => {
-                      const company = companies.find((c) => c.id === branch.companyId);
+                    {branches.map(branch => {
+                      if (!branch?.id) return null;
+                      const company = companies.find(
+                        c => c.id === branch.companyId
+                      );
                       return (
-                        <SelectItem key={branch.id} value={branch.id.toString()}>
-                          {branch.name} ({company?.name})
+                        <SelectItem
+                          key={branch.id}
+                          value={branch.id.toString()}
+                        >
+                          {branch.name} ({company?.name || "Unknown Company"})
                         </SelectItem>
                       );
                     })}
@@ -146,7 +172,7 @@ export default function Employees() {
                   <Input
                     required
                     value={formData.firstName}
-                    onChange={(e) =>
+                    onChange={e =>
                       setFormData({ ...formData, firstName: e.target.value })
                     }
                     placeholder="John"
@@ -157,7 +183,7 @@ export default function Employees() {
                   <Input
                     required
                     value={formData.lastName}
-                    onChange={(e) =>
+                    onChange={e =>
                       setFormData({ ...formData, lastName: e.target.value })
                     }
                     placeholder="Doe"
@@ -169,7 +195,7 @@ export default function Employees() {
                 <Input
                   required
                   value={formData.jobTitle}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({ ...formData, jobTitle: e.target.value })
                   }
                   placeholder="Sales Manager"
@@ -182,7 +208,7 @@ export default function Employees() {
                     type="email"
                     required
                     value={formData.email}
-                    onChange={(e) =>
+                    onChange={e =>
                       setFormData({ ...formData, email: e.target.value })
                     }
                     placeholder="john@company.com"
@@ -193,7 +219,7 @@ export default function Employees() {
                   <Input
                     required
                     value={formData.phoneNumber}
-                    onChange={(e) =>
+                    onChange={e =>
                       setFormData({ ...formData, phoneNumber: e.target.value })
                     }
                     placeholder="+1234567890"
@@ -234,7 +260,8 @@ export default function Employees() {
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {employees.map((employee) => {
+          {employees.map(employee => {
+            if (!employee?.id) return null;
             const branchInfo = getBranchInfo(employee.branchId);
             return (
               <Card key={employee.id} className="card-minimal p-6">
@@ -267,13 +294,19 @@ export default function Employees() {
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Mail className="w-4 h-4" />
-                    <a href={`mailto:${employee.email}`} className="hover:text-accent">
+                    <a
+                      href={`mailto:${employee.email}`}
+                      className="hover:text-accent"
+                    >
                       {employee.email}
                     </a>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Phone className="w-4 h-4" />
-                    <a href={`tel:${employee.phoneNumber}`} className="hover:text-accent">
+                    <a
+                      href={`tel:${employee.phoneNumber}`}
+                      className="hover:text-accent"
+                    >
                       {employee.phoneNumber}
                     </a>
                   </div>

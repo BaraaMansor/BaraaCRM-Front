@@ -49,21 +49,21 @@
   --primary-foreground: #f0f9ff;
   --sidebar-primary: #1e40af;
   --sidebar-primary-foreground: #f0f9ff;
-  
+
   /* Accent: Vibrant Teal for interactive elements */
   --accent: #0891b2;
   --accent-foreground: #ffffff;
-  
+
   /* Chart colors using slate blue spectrum */
   --chart-1: #3b82f6;
   --chart-2: #1e40af;
   --chart-3: #1e3a8a;
   --chart-4: #0c4a6e;
   --chart-5: #082f49;
-  
+
   /* Spacing and radius */
   --radius: 0.65rem;
-  
+
   /* Light theme colors */
   --background: #ffffff;
   --foreground: #0f172a;
@@ -142,28 +142,33 @@
   input[type="radio"]:not(:disabled) {
     @apply cursor-pointer;
   }
-  
+
   /* Typography System: Poppins for headings, Inter for body */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-bold tracking-tight;
   }
-  
+
   h1 {
     @apply text-3xl md:text-4xl;
   }
-  
+
   h2 {
     @apply text-2xl md:text-3xl;
   }
-  
+
   h3 {
     @apply text-xl md:text-2xl;
   }
-  
+
   h4 {
     @apply text-lg md:text-xl;
   }
-  
+
   body {
     @apply font-sans text-base leading-relaxed;
   }
@@ -210,26 +215,28 @@
       max-width: 1280px; /* Standard content width */
     }
   }
-  
+
   /* Card component with minimal border and soft shadow */
   .card-minimal {
     @apply bg-card text-card-foreground rounded-lg shadow-sm transition-all duration-200 hover:shadow-md;
   }
-  
+
   /* Smooth transitions for interactive elements */
   .transition-smooth {
     @apply transition-all duration-200 ease-out;
   }
 }
 
-/* Import Google Fonts for typography system */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
-
 /* Apply typography system */
 :root {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Poppins', sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Poppins", sans-serif;
 }

@@ -6,37 +6,55 @@
  * - Quick create and delete actions
  */
 
-import { useEffect, useState } from 'react';
-import MainLayout from '@/components/MainLayout';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Plus, Mail, Phone, Briefcase, Trash2 } from 'lucide-react';
-import { contactApi, Contact, CreateContactDto, companyApi, Company } from '@/lib/api';
-import { toast } from 'sonner';
+import { useEffect, useState } from "react";
+import MainLayout from "@/components/MainLayout";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Mail, Phone, Briefcase, Trash2 } from "lucide-react";
+import {
+  contactApi,
+  Contact,
+  CreateContactDto,
+  companyApi,
+  Company,
+} from "@/lib/api";
+import { toast } from "sonner";
 
-type ContactType = 'Lead' | 'Customer' | 'Partner';
+type ContactType = "Lead" | "Customer" | "Partner";
 
 export default function Contacts() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [filterType, setFilterType] = useState<ContactType | 'All'>('All');
+  const [filterType, setFilterType] = useState<ContactType | "All">("All");
   const [formData, setFormData] = useState<CreateContactDto>({
     companyId: 0,
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNumber: '',
-    jobTitle: '',
-    contactType: 'Customer',
-    address: '',
-    city: '',
-    country: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    jobTitle: "",
+    contactType: "Customer",
+    address: "",
+    city: "",
+    country: "",
   });
 
   useEffect(() => {
@@ -50,11 +68,11 @@ export default function Contacts() {
         contactApi.getAll(),
         companyApi.getAll(),
       ]);
-      setContacts(contactsData);
-      setCompanies(companiesData);
+      setContacts(Array.isArray(contactsData) ? contactsData : []);
+      setCompanies(Array.isArray(companiesData) ? companiesData : []);
     } catch (error) {
-      console.error('Failed to fetch data:', error);
-      toast.error('Failed to load contacts');
+      console.error("Failed to fetch data:", error);
+      toast.error("Failed to load contacts");
     } finally {
       setLoading(false);
     }
@@ -64,53 +82,54 @@ export default function Contacts() {
     e.preventDefault();
     try {
       await contactApi.create(formData);
-      toast.success('Contact created successfully');
+      toast.success("Contact created successfully");
       setFormData({
         companyId: 0,
-        firstName: '',
-        lastName: '',
-        email: '',
-        phoneNumber: '',
-        jobTitle: '',
-        contactType: 'Customer',
-        address: '',
-        city: '',
-        country: '',
+        firstName: "",
+        lastName: "",
+        email: "",
+        phoneNumber: "",
+        jobTitle: "",
+        contactType: "Customer",
+        address: "",
+        city: "",
+        country: "",
       });
       setIsDialogOpen(false);
       fetchData();
     } catch (error) {
-      console.error('Failed to create contact:', error);
-      toast.error('Failed to create contact');
+      console.error("Failed to create contact:", error);
+      toast.error("Failed to create contact");
     }
   };
 
   const handleDeleteContact = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this contact?')) return;
+    if (!confirm("Are you sure you want to delete this contact?")) return;
     try {
       await contactApi.delete(id);
-      toast.success('Contact deleted successfully');
+      toast.success("Contact deleted successfully");
       fetchData();
     } catch (error) {
-      console.error('Failed to delete contact:', error);
-      toast.error('Failed to delete contact');
+      console.error("Failed to delete contact:", error);
+      toast.error("Failed to delete contact");
     }
   };
 
-  const filteredContacts = filterType === 'All'
-    ? contacts
-    : contacts.filter((c) => c.contactType === filterType);
+  const filteredContacts =
+    filterType === "All"
+      ? contacts
+      : contacts.filter(c => c.contactType === filterType);
 
   const getContactTypeColor = (type: ContactType) => {
     switch (type) {
-      case 'Lead':
-        return 'bg-blue-100 text-blue-800';
-      case 'Customer':
-        return 'bg-green-100 text-green-800';
-      case 'Partner':
-        return 'bg-purple-100 text-purple-800';
+      case "Lead":
+        return "bg-blue-100 text-blue-800";
+      case "Customer":
+        return "bg-green-100 text-green-800";
+      case "Partner":
+        return "bg-purple-100 text-purple-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -123,26 +142,26 @@ export default function Contacts() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div className="flex gap-2">
           <Button
-            variant={filterType === 'All' ? 'default' : 'outline'}
-            onClick={() => setFilterType('All')}
+            variant={filterType === "All" ? "default" : "outline"}
+            onClick={() => setFilterType("All")}
           >
             All
           </Button>
           <Button
-            variant={filterType === 'Lead' ? 'default' : 'outline'}
-            onClick={() => setFilterType('Lead')}
+            variant={filterType === "Lead" ? "default" : "outline"}
+            onClick={() => setFilterType("Lead")}
           >
             Leads
           </Button>
           <Button
-            variant={filterType === 'Customer' ? 'default' : 'outline'}
-            onClick={() => setFilterType('Customer')}
+            variant={filterType === "Customer" ? "default" : "outline"}
+            onClick={() => setFilterType("Customer")}
           >
             Customers
           </Button>
           <Button
-            variant={filterType === 'Partner' ? 'default' : 'outline'}
-            onClick={() => setFilterType('Partner')}
+            variant={filterType === "Partner" ? "default" : "outline"}
+            onClick={() => setFilterType("Partner")}
           >
             Partners
           </Button>
@@ -165,7 +184,7 @@ export default function Contacts() {
                   <Input
                     required
                     value={formData.firstName}
-                    onChange={(e) =>
+                    onChange={e =>
                       setFormData({ ...formData, firstName: e.target.value })
                     }
                     placeholder="John"
@@ -176,7 +195,7 @@ export default function Contacts() {
                   <Input
                     required
                     value={formData.lastName}
-                    onChange={(e) =>
+                    onChange={e =>
                       setFormData({ ...formData, lastName: e.target.value })
                     }
                     placeholder="Doe"
@@ -187,7 +206,7 @@ export default function Contacts() {
                 <label className="text-sm font-medium">Company</label>
                 <Select
                   value={formData.companyId.toString()}
-                  onValueChange={(value) =>
+                  onValueChange={value =>
                     setFormData({ ...formData, companyId: parseInt(value) })
                   }
                 >
@@ -195,11 +214,17 @@ export default function Contacts() {
                     <SelectValue placeholder="Select a company" />
                   </SelectTrigger>
                   <SelectContent>
-                    {companies.map((company) => (
-                      <SelectItem key={company.id} value={company.id.toString()}>
-                        {company.name}
-                      </SelectItem>
-                    ))}
+                    {companies.map(company => {
+                      if (!company?.id) return null;
+                      return (
+                        <SelectItem
+                          key={company.id}
+                          value={company.id.toString()}
+                        >
+                          {company.name || "Unnamed Company"}
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
@@ -207,7 +232,7 @@ export default function Contacts() {
                 <label className="text-sm font-medium">Contact Type</label>
                 <Select
                   value={formData.contactType}
-                  onValueChange={(value) =>
+                  onValueChange={value =>
                     setFormData({
                       ...formData,
                       contactType: value as ContactType,
@@ -231,7 +256,7 @@ export default function Contacts() {
                     type="email"
                     required
                     value={formData.email}
-                    onChange={(e) =>
+                    onChange={e =>
                       setFormData({ ...formData, email: e.target.value })
                     }
                     placeholder="john@example.com"
@@ -242,7 +267,7 @@ export default function Contacts() {
                   <Input
                     required
                     value={formData.phoneNumber}
-                    onChange={(e) =>
+                    onChange={e =>
                       setFormData({ ...formData, phoneNumber: e.target.value })
                     }
                     placeholder="+1234567890"
@@ -254,7 +279,7 @@ export default function Contacts() {
                 <Input
                   required
                   value={formData.jobTitle}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({ ...formData, jobTitle: e.target.value })
                   }
                   placeholder="Sales Manager"
@@ -266,7 +291,7 @@ export default function Contacts() {
                   <Input
                     required
                     value={formData.city}
-                    onChange={(e) =>
+                    onChange={e =>
                       setFormData({ ...formData, city: e.target.value })
                     }
                     placeholder="New York"
@@ -277,7 +302,7 @@ export default function Contacts() {
                   <Input
                     required
                     value={formData.country}
-                    onChange={(e) =>
+                    onChange={e =>
                       setFormData({ ...formData, country: e.target.value })
                     }
                     placeholder="USA"
@@ -318,46 +343,57 @@ export default function Contacts() {
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredContacts.map((contact) => (
-            <Card key={contact.id} className="card-minimal p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground">
-                    {contact.firstName} {contact.lastName}
-                  </h3>
-                  <Badge className={`mt-2 ${getContactTypeColor(contact.contactType)}`}>
-                    {contact.contactType}
-                  </Badge>
+          {filteredContacts.map(contact => {
+            if (!contact?.id) return null;
+            return (
+              <Card key={contact.id} className="card-minimal p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">
+                      {contact.firstName} {contact.lastName}
+                    </h3>
+                    <Badge
+                      className={`mt-2 ${getContactTypeColor(contact.contactType)}`}
+                    >
+                      {contact.contactType}
+                    </Badge>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDeleteContact(contact.id)}
+                    className="text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDeleteContact(contact.id)}
-                  className="text-destructive hover:bg-destructive/10"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Briefcase className="w-4 h-4" />
-                  <span>{contact.jobTitle}</span>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Briefcase className="w-4 h-4" />
+                    <span>{contact.jobTitle}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Mail className="w-4 h-4" />
+                    <a
+                      href={`mailto:${contact.email}`}
+                      className="hover:text-accent"
+                    >
+                      {contact.email}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Phone className="w-4 h-4" />
+                    <a
+                      href={`tel:${contact.phoneNumber}`}
+                      className="hover:text-accent"
+                    >
+                      {contact.phoneNumber}
+                    </a>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Mail className="w-4 h-4" />
-                  <a href={`mailto:${contact.email}`} className="hover:text-accent">
-                    {contact.email}
-                  </a>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Phone className="w-4 h-4" />
-                  <a href={`tel:${contact.phoneNumber}`} className="hover:text-accent">
-                    {contact.phoneNumber}
-                  </a>
-                </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
       )}
     </MainLayout>

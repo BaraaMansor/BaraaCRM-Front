@@ -6,8 +6,8 @@
  * - Consistent styling with slate blue primary color
  */
 
-import { useState } from 'react';
-import { Link } from 'wouter';
+import { useState } from "react";
+import { Link } from "wouter";
 import {
   Menu,
   X,
@@ -16,8 +16,8 @@ import {
   Users,
   UserCheck,
   Home,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface NavItem {
   label: string;
@@ -28,28 +28,28 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   {
-    label: 'Dashboard',
-    href: '/',
+    label: "Dashboard",
+    href: "/",
     icon: <Home className="w-5 h-5" />,
   },
   {
-    label: 'Companies',
-    href: '/companies',
+    label: "Companies",
+    href: "/companies",
     icon: <Building2 className="w-5 h-5" />,
   },
   {
-    label: 'Branches',
-    href: '/branches',
+    label: "Branches",
+    href: "/branches",
     icon: <MapPin className="w-5 h-5" />,
   },
   {
-    label: 'Employees',
-    href: '/employees',
+    label: "Employees",
+    href: "/employees",
     icon: <UserCheck className="w-5 h-5" />,
   },
   {
-    label: 'Contacts',
-    href: '/contacts',
+    label: "Contacts",
+    href: "/contacts",
     icon: <Users className="w-5 h-5" />,
   },
 ];
@@ -67,11 +67,7 @@ export default function Sidebar() {
           onClick={() => setIsOpen(!isOpen)}
           className="bg-white shadow-md"
         >
-          {isOpen ? (
-            <X className="w-5 h-5" />
-          ) : (
-            <Menu className="w-5 h-5" />
-          )}
+          {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </Button>
       </div>
 
@@ -89,15 +85,13 @@ export default function Sidebar() {
           fixed lg:static inset-y-0 left-0 z-40
           w-64 bg-sidebar border-r border-sidebar-border
           transform transition-transform duration-200 ease-out
-          ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
           flex flex-col
         `}
       >
         {/* Header */}
         <div className="p-6 border-b border-sidebar-border">
-          <h1 className="text-2xl font-bold text-sidebar-primary">
-            BaraaCRM
-          </h1>
+          <h1 className="text-2xl font-bold text-sidebar-primary">BaraaCRM</h1>
           <p className="text-sm text-sidebar-foreground/60 mt-1">
             Customer Management
           </p>
@@ -105,28 +99,28 @@ export default function Sidebar() {
 
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-2">
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href}>
-              <a
-                onClick={() => setIsOpen(false)}
-                className="
-                  flex items-center gap-3 px-4 py-3 rounded-lg
-                  text-sidebar-foreground transition-smooth
-                  hover:bg-sidebar-accent hover:text-sidebar-primary
-                  active:bg-sidebar-primary active:text-sidebar-primary-foreground
-                  group
-                "
-              >
-                <span className="text-sidebar-foreground/70 group-hover:text-sidebar-primary transition-smooth">
-                  {item.icon}
+          {navItems.map(item => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setIsOpen(false)}
+              className="
+                flex items-center gap-3 px-4 py-3 rounded-lg
+                text-sidebar-foreground transition-smooth
+                hover:bg-sidebar-accent hover:text-sidebar-primary
+                active:bg-sidebar-primary active:text-sidebar-primary-foreground
+                group
+              "
+            >
+              <span className="text-sidebar-foreground/70 group-hover:text-sidebar-primary transition-smooth">
+                {item.icon}
+              </span>
+              <span className="font-medium">{item.label}</span>
+              {item.badge && (
+                <span className="ml-auto text-xs bg-sidebar-primary text-sidebar-primary-foreground px-2 py-1 rounded">
+                  {item.badge}
                 </span>
-                <span className="font-medium">{item.label}</span>
-                {item.badge && (
-                  <span className="ml-auto text-xs bg-sidebar-primary text-sidebar-primary-foreground px-2 py-1 rounded">
-                    {item.badge}
-                  </span>
-                )}
-              </a>
+              )}
             </Link>
           ))}
         </nav>

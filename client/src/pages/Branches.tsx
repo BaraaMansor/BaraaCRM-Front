@@ -6,16 +6,34 @@
  * - Quick create and delete actions
  */
 
-import { useEffect, useState } from 'react';
-import MainLayout from '@/components/MainLayout';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Mail, Phone, MapPin, Trash2 } from 'lucide-react';
-import { branchApi, Branch, CreateBranchDto, companyApi, Company } from '@/lib/api';
-import { toast } from 'sonner';
+import { useEffect, useState } from "react";
+import MainLayout from "@/components/MainLayout";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Plus, Mail, Phone, MapPin, Trash2 } from "lucide-react";
+import {
+  branchApi,
+  Branch,
+  CreateBranchDto,
+  companyApi,
+  Company,
+} from "@/lib/api";
+import { toast } from "sonner";
 
 export default function Branches() {
   const [branches, setBranches] = useState<Branch[]>([]);
@@ -24,12 +42,12 @@ export default function Branches() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [formData, setFormData] = useState<CreateBranchDto>({
     companyId: 0,
-    name: '',
-    address: '',
-    phoneNumber: '',
-    email: '',
-    city: '',
-    country: '',
+    name: "",
+    address: "",
+    phoneNumber: "",
+    email: "",
+    city: "",
+    country: "",
   });
 
   useEffect(() => {
@@ -43,11 +61,13 @@ export default function Branches() {
         branchApi.getAll(),
         companyApi.getAll(),
       ]);
-      setBranches(branchesData);
-      setCompanies(companiesData);
+      console.log("Fetched branches:", branchesData);
+      console.log("Fetched companies:", companiesData);
+      setBranches(Array.isArray(branchesData) ? branchesData : []);
+      setCompanies(Array.isArray(companiesData) ? companiesData : []);
     } catch (error) {
-      console.error('Failed to fetch data:', error);
-      toast.error('Failed to load branches');
+      console.error("Failed to fetch data:", error);
+      toast.error("Failed to load branches");
     } finally {
       setLoading(false);
     }
@@ -57,38 +77,38 @@ export default function Branches() {
     e.preventDefault();
     try {
       await branchApi.create(formData);
-      toast.success('Branch created successfully');
+      toast.success("Branch created successfully");
       setFormData({
         companyId: 0,
-        name: '',
-        address: '',
-        phoneNumber: '',
-        email: '',
-        city: '',
-        country: '',
+        name: "",
+        address: "",
+        phoneNumber: "",
+        email: "",
+        city: "",
+        country: "",
       });
       setIsDialogOpen(false);
       fetchData();
     } catch (error) {
-      console.error('Failed to create branch:', error);
-      toast.error('Failed to create branch');
+      console.error("Failed to create branch:", error);
+      toast.error("Failed to create branch");
     }
   };
 
   const handleDeleteBranch = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this branch?')) return;
+    if (!confirm("Are you sure you want to delete this branch?")) return;
     try {
       await branchApi.delete(id);
-      toast.success('Branch deleted successfully');
+      toast.success("Branch deleted successfully");
       fetchData();
     } catch (error) {
-      console.error('Failed to delete branch:', error);
-      toast.error('Failed to delete branch');
+      console.error("Failed to delete branch:", error);
+      toast.error("Failed to delete branch");
     }
   };
 
   const getCompanyName = (companyId: number) => {
-    return companies.find((c) => c.id === companyId)?.name || 'Unknown Company';
+    return companies.find(c => c.id === companyId)?.name || "Unknown Company";
   };
 
   return (
@@ -112,31 +132,34 @@ export default function Branches() {
             </DialogHeader>
             <form onSubmit={handleCreateBranch} className="space-y-4">
               <div>
-                <label className="text-sm font-medium">Company</label>
-                <Select
-                  value={formData.companyId.toString()}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, companyId: parseInt(value) })
-                  }
+                <label className="text-sm font-medium">Company *</label>
+                <select
+                  required
+                  className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={formData.companyId}
+                  onChange={e => {
+                    const value = parseInt(e.target.value, 10);
+                    setFormData({ ...formData, companyId: value });
+                  }}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a company" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {companies.map((company) => (
-                      <SelectItem key={company.id} value={company.id.toString()}>
-                        {company.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  <option value={0} disabled>
+                    {companies.length === 0
+                      ? "No companies available"
+                      : "Select a company"}
+                  </option>
+                  {companies.map(company => (
+                    <option key={company.id} value={company.id}>
+                      {company.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="text-sm font-medium">Branch Name</label>
                 <Input
                   required
                   value={formData.name}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({ ...formData, name: e.target.value })
                   }
                   placeholder="New York Office"
@@ -149,7 +172,7 @@ export default function Branches() {
                     type="email"
                     required
                     value={formData.email}
-                    onChange={(e) =>
+                    onChange={e =>
                       setFormData({ ...formData, email: e.target.value })
                     }
                     placeholder="ny@company.com"
@@ -160,7 +183,7 @@ export default function Branches() {
                   <Input
                     required
                     value={formData.phoneNumber}
-                    onChange={(e) =>
+                    onChange={e =>
                       setFormData({ ...formData, phoneNumber: e.target.value })
                     }
                     placeholder="+1234567890"
@@ -172,7 +195,7 @@ export default function Branches() {
                 <Input
                   required
                   value={formData.address}
-                  onChange={(e) =>
+                  onChange={e =>
                     setFormData({ ...formData, address: e.target.value })
                   }
                   placeholder="456 Business Avenue"
@@ -184,7 +207,7 @@ export default function Branches() {
                   <Input
                     required
                     value={formData.city}
-                    onChange={(e) =>
+                    onChange={e =>
                       setFormData({ ...formData, city: e.target.value })
                     }
                     placeholder="New York"
@@ -195,7 +218,7 @@ export default function Branches() {
                   <Input
                     required
                     value={formData.country}
-                    onChange={(e) =>
+                    onChange={e =>
                       setFormData({ ...formData, country: e.target.value })
                     }
                     placeholder="USA"
@@ -236,46 +259,57 @@ export default function Branches() {
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {branches.map((branch) => (
-            <Card key={branch.id} className="card-minimal p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground">
-                    {branch.name}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {getCompanyName(branch.companyId)}
-                  </p>
+          {branches.map(branch => {
+            if (!branch?.id) return null;
+            return (
+              <Card key={branch.id} className="card-minimal p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">
+                      {branch.name || "Unnamed Branch"}
+                    </h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {getCompanyName(branch.companyId)}
+                    </p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDeleteBranch(branch.id)}
+                    className="text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDeleteBranch(branch.id)}
-                  className="text-destructive hover:bg-destructive/10"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-              <div className="space-y-2 text-sm">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Mail className="w-4 h-4" />
-                  <a href={`mailto:${branch.email}`} className="hover:text-accent">
-                    {branch.email}
-                  </a>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Mail className="w-4 h-4" />
+                    <a
+                      href={`mailto:${branch.email}`}
+                      className="hover:text-accent"
+                    >
+                      {branch.email}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Phone className="w-4 h-4" />
+                    <a
+                      href={`tel:${branch.phoneNumber}`}
+                      className="hover:text-accent"
+                    >
+                      {branch.phoneNumber}
+                    </a>
+                  </div>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <MapPin className="w-4 h-4" />
+                    <span>
+                      {branch.city}, {branch.country}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Phone className="w-4 h-4" />
-                  <a href={`tel:${branch.phoneNumber}`} className="hover:text-accent">
-                    {branch.phoneNumber}
-                  </a>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <MapPin className="w-4 h-4" />
-                  <span>{branch.city}, {branch.country}</span>
-                </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
       )}
     </MainLayout>

@@ -6,7 +6,12 @@ import path from "path";
 import { defineConfig } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime()];
+const plugins = [
+  react(),
+  tailwindcss(),
+  jsxLocPlugin(),
+  vitePluginManusRuntime(),
+];
 
 export default defineConfig({
   plugins,
@@ -24,9 +29,9 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
-    port: 3000,
+    port: 3000, // Matches CORS configuration in BaraaCRM backend
     strictPort: false, // Will find next available port if 3000 is busy
-    host: true,
+    host: "localhost", // Use localhost instead of network IP for CORS compatibility
     allowedHosts: [
       ".manuspre.computer",
       ".manus.computer",
