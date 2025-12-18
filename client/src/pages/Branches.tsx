@@ -18,13 +18,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Plus, Mail, Phone, MapPin, Trash2 } from "lucide-react";
 import {
   branchApi,
@@ -40,8 +33,16 @@ export default function Branches() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [formData, setFormData] = useState<CreateBranchDto>({
-    companyId: 0,
+  const [formData, setFormData] = useState<{
+    companyId: number | "";
+    name: string;
+    address: string;
+    phoneNumber: string;
+    email: string;
+    city: string;
+    country: string;
+  }>({
+    companyId: "",
     name: "",
     address: "",
     phoneNumber: "",
@@ -62,9 +63,29 @@ export default function Branches() {
         companyApi.getAll(),
       ]);
       console.log("Fetched branches:", branchesData);
-      console.log("Fetched companies:", companiesData);
+      console.log("Fetched companies RAW:", companiesData);
+
+      // Filter out companies with invalid IDs
+      const validCompanies = Array.isArray(companiesData)
+        ? companiesData.filter(c => c && typeof c.id === "number" && c.id > 0)
+        : [];
+
+      console.log("Valid companies after filtering:", validCompanies);
+
+      if (
+        validCompanies.length === 0 &&
+        Array.isArray(companiesData) &&
+        companiesData.length > 0
+      ) {
+        console.error(
+          "All companies have invalid IDs! Raw data:",
+          companiesData
+        );
+        toast.error("Companies data is invalid - please check backend");
+      }
+
       setBranches(Array.isArray(branchesData) ? branchesData : []);
-      setCompanies(Array.isArray(companiesData) ? companiesData : []);
+      setCompanies(validCompanies);
     } catch (error) {
       console.error("Failed to fetch data:", error);
       toast.error("Failed to load branches");
@@ -75,11 +96,33 @@ export default function Branches() {
 
   const handleCreateBranch = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate company selection
+    const companyIdNum =
+      typeof formData.companyId === "string"
+        ? parseInt(formData.companyId, 10)
+        : formData.companyId;
+
+    if (!companyIdNum || isNaN(companyIdNum) || companyIdNum <= 0) {
+      toast.error("Please select a company");
+      return;
+    }
+
     try {
-      await branchApi.create(formData);
+      const branchData: CreateBranchDto = {
+        companyId: companyIdNum,
+        name: formData.name || "",
+        address: formData.address || "",
+        phoneNumber: formData.phoneNumber || "",
+        email: formData.email || "",
+        city: formData.city || "",
+        country: formData.country || "",
+      };
+      console.log("Creating branch with data:", branchData);
+      await branchApi.create(branchData);
       toast.success("Branch created successfully");
       setFormData({
-        companyId: 0,
+        companyId: "",
         name: "",
         address: "",
         phoneNumber: "",
@@ -129,30 +172,66 @@ export default function Branches() {
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle>Create New Branch</DialogTitle>
+              <p className="text-sm text-muted-foreground mt-1.5">
+                Add a new branch location for a company
+              </p>
             </DialogHeader>
             <form onSubmit={handleCreateBranch} className="space-y-4">
               <div>
                 <label className="text-sm font-medium">Company *</label>
                 <select
+                  id="company-select"
+                  name="companyId"
                   required
                   className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  value={formData.companyId}
+                  value={String(formData.companyId)}
                   onChange={e => {
-                    const value = parseInt(e.target.value, 10);
-                    setFormData({ ...formData, companyId: value });
+                    console.log("Event target:", e.target);
+                    console.log("Event target tagName:", e.target.tagName);
+                    console.log("Event target value:", e.target.value);
+                    console.log("Selected index:", e.target.selectedIndex);
+                    console.log(
+                      "Selected option:",
+                      e.target.options?.[e.target.selectedIndex]
+                    );
+
+                    const selectedOption =
+                      e.target.options?.[e.target.selectedIndex];
+                    const value = selectedOption?.value ?? e.target.value ?? "";
+
+                    console.log("Final value:", value);
+
+                    if (value === "") {
+                      setFormData(prev => ({ ...prev, companyId: "" }));
+                    } else {
+                      const numValue = parseInt(value, 10);
+                      console.log("Parsed value:", numValue);
+                      setFormData(prev => ({ ...prev, companyId: numValue }));
+                    }
                   }}
                 >
-                  <option value={0} disabled>
+                  <option value="">
                     {companies.length === 0
                       ? "No companies available"
                       : "Select a company"}
                   </option>
-                  {companies.map(company => (
-                    <option key={company.id} value={company.id}>
-                      {company.name}
-                    </option>
-                  ))}
+                  {companies.map(company => {
+                    // Extra safety check
+                    if (!company || typeof company.id !== "number") {
+                      console.warn("Invalid company object:", company);
+                      return null;
+                    }
+                    return (
+                      <option key={company.id} value={company.id}>
+                        {company.name || `Company #${company.id}`}
+                      </option>
+                    );
+                  })}
                 </select>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Current value: {JSON.stringify(formData.companyId)} |
+                  Companies loaded: {companies.length}
+                </p>
               </div>
               <div>
                 <label className="text-sm font-medium">Branch Name</label>

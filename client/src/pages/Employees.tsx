@@ -18,13 +18,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Plus, Mail, Phone, Briefcase, Trash2, MapPin } from "lucide-react";
 import {
   employeeApi,
@@ -43,8 +36,10 @@ export default function Employees() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [formData, setFormData] = useState<CreateEmployeeDto>({
-    branchId: 0,
+  const [formData, setFormData] = useState<
+    Partial<CreateEmployeeDto> & { branchId: number | "" }
+  >({
+    branchId: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -77,11 +72,31 @@ export default function Employees() {
 
   const handleCreateEmployee = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const branchIdNum =
+      typeof formData.branchId === "string"
+        ? parseInt(formData.branchId, 10)
+        : formData.branchId;
+
+    if (!branchIdNum || isNaN(branchIdNum) || branchIdNum <= 0) {
+      toast.error("Please select a branch");
+      return;
+    }
+
     try {
-      await employeeApi.create(formData);
+      const employeeData: CreateEmployeeDto = {
+        branchId: branchIdNum,
+        firstName: formData.firstName || "",
+        lastName: formData.lastName || "",
+        email: formData.email || "",
+        phoneNumber: formData.phoneNumber || "",
+        jobTitle: formData.jobTitle || "",
+      };
+      console.log("Creating employee with data:", employeeData);
+      await employeeApi.create(employeeData);
       toast.success("Employee created successfully");
       setFormData({
-        branchId: 0,
+        branchId: "",
         firstName: "",
         lastName: "",
         email: "",
@@ -138,33 +153,34 @@ export default function Employees() {
             </DialogHeader>
             <form onSubmit={handleCreateEmployee} className="space-y-4">
               <div>
-                <label className="text-sm font-medium">Branch</label>
-                <Select
-                  value={formData.branchId.toString()}
-                  onValueChange={value =>
-                    setFormData({ ...formData, branchId: parseInt(value) })
-                  }
+                <label className="text-sm font-medium">Branch *</label>
+                <select
+                  required
+                  className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={formData.branchId}
+                  onChange={e => {
+                    const value =
+                      e.target.value === "" ? "" : parseInt(e.target.value, 10);
+                    setFormData({ ...formData, branchId: value });
+                  }}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a branch" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {branches.map(branch => {
-                      if (!branch?.id) return null;
-                      const company = companies.find(
-                        c => c.id === branch.companyId
-                      );
-                      return (
-                        <SelectItem
-                          key={branch.id}
-                          value={branch.id.toString()}
-                        >
-                          {branch.name} ({company?.name || "Unknown Company"})
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectContent>
-                </Select>
+                  <option value="" disabled>
+                    {branches.length === 0
+                      ? "No branches available"
+                      : "Select a branch"}
+                  </option>
+                  {branches.map(branch => {
+                    if (!branch?.id) return null;
+                    const company = companies.find(
+                      c => c.id === branch.companyId
+                    );
+                    return (
+                      <option key={branch.id} value={branch.id}>
+                        {branch.name} ({company?.name || "Unknown Company"})
+                      </option>
+                    );
+                  })}
+                </select>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>

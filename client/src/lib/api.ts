@@ -142,15 +142,29 @@ async function apiRequest<T>(
       const errorData = await response.json().catch(() => ({}));
       throw new ApiError(
         response.status,
-        `API Error: ${response.statusText}`,
+        errorData.message || `API Error: ${response.statusText}`,
         errorData
       );
     }
 
-    return await response.json();
+    // Handle 204 No Content (for DELETE operations)
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
+    // Handle empty responses
+    const text = await response.text();
+    if (!text) {
+      return undefined as T;
+    }
+
+    return JSON.parse(text);
   } catch (error) {
     if (error instanceof ApiError) {
       throw error;
+    }
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      throw new ApiError(0, 'Network error: Unable to connect to backend. Make sure the backend is running.', error);
     }
     throw new ApiError(500, 'Network error or invalid response', error);
   }

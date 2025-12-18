@@ -44,8 +44,10 @@ export default function Contacts() {
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [filterType, setFilterType] = useState<ContactType | "All">("All");
-  const [formData, setFormData] = useState<CreateContactDto>({
-    companyId: 0,
+  const [formData, setFormData] = useState<
+    Partial<CreateContactDto> & { companyId: number | "" }
+  >({
+    companyId: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -80,11 +82,35 @@ export default function Contacts() {
 
   const handleCreateContact = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const companyIdNum =
+      typeof formData.companyId === "string"
+        ? parseInt(formData.companyId, 10)
+        : formData.companyId;
+
+    if (!companyIdNum || isNaN(companyIdNum) || companyIdNum <= 0) {
+      toast.error("Please select a company");
+      return;
+    }
+
     try {
-      await contactApi.create(formData);
+      const contactData: CreateContactDto = {
+        companyId: companyIdNum,
+        firstName: formData.firstName || "",
+        lastName: formData.lastName || "",
+        email: formData.email || "",
+        phoneNumber: formData.phoneNumber || "",
+        jobTitle: formData.jobTitle || "",
+        contactType: formData.contactType || "Customer",
+        address: formData.address || "",
+        city: formData.city || "",
+        country: formData.country || "",
+      };
+      console.log("Creating contact with data:", contactData);
+      await contactApi.create(contactData);
       toast.success("Contact created successfully");
       setFormData({
-        companyId: 0,
+        companyId: "",
         firstName: "",
         lastName: "",
         email: "",
@@ -203,30 +229,31 @@ export default function Contacts() {
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium">Company</label>
-                <Select
-                  value={formData.companyId.toString()}
-                  onValueChange={value =>
-                    setFormData({ ...formData, companyId: parseInt(value) })
-                  }
+                <label className="text-sm font-medium">Company *</label>
+                <select
+                  required
+                  className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={formData.companyId}
+                  onChange={e => {
+                    const value =
+                      e.target.value === "" ? "" : parseInt(e.target.value, 10);
+                    setFormData({ ...formData, companyId: value });
+                  }}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a company" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {companies.map(company => {
-                      if (!company?.id) return null;
-                      return (
-                        <SelectItem
-                          key={company.id}
-                          value={company.id.toString()}
-                        >
-                          {company.name || "Unnamed Company"}
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectContent>
-                </Select>
+                  <option value="" disabled>
+                    {companies.length === 0
+                      ? "No companies available"
+                      : "Select a company"}
+                  </option>
+                  {companies.map(company => {
+                    if (!company?.id) return null;
+                    return (
+                      <option key={company.id} value={company.id}>
+                        {company.name || "Unnamed Company"}
+                      </option>
+                    );
+                  })}
+                </select>
               </div>
               <div>
                 <label className="text-sm font-medium">Contact Type</label>
