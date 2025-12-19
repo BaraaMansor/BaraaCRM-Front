@@ -6,6 +6,7 @@ import Companies from "@/pages/Companies";
 import Branches from "@/pages/Branches";
 import Employees from "@/pages/Employees";
 import Contacts from "@/pages/Contacts";
+import BestPractices from "@/pages/BestPractices";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -26,6 +27,7 @@ function Router() {
       <Route path={"/branches"} component={Branches} />
       <Route path={"/employees"} component={Employees} />
       <Route path={"/contacts"} component={Contacts} />
+      <Route path={"/best-practices"} component={BestPractices} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

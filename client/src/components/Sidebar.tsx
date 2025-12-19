@@ -16,6 +16,7 @@ import {
   Users,
   UserCheck,
   Home,
+  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -51,6 +52,12 @@ const navItems: NavItem[] = [
     label: "Contacts",
     href: "/contacts",
     icon: <Users className="w-5 h-5" />,
+  },
+  {
+    label: "Best Practices",
+    href: "/best-practices",
+    icon: <BookOpen className="w-5 h-5" />,
+    badge: "DOCS",
   },
 ];
 

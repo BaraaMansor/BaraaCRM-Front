@@ -11,7 +11,7 @@ import { Link } from 'wouter';
 import MainLayout from '@/components/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Building2, MapPin, Users, UserCheck, ArrowRight } from 'lucide-react';
+import { Building2, MapPin, Users, UserCheck, ArrowRight, BookOpen } from 'lucide-react';
 import { companyApi, branchApi, employeeApi, contactApi } from '@/lib/api';
 import { toast } from 'sonner';
 
@@ -122,7 +122,7 @@ export default function Dashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Getting Started */}
         <Card className="card-minimal p-6">
           <h2 className="text-lg font-semibold text-foreground mb-4">
@@ -166,6 +166,29 @@ export default function Dashboard() {
               Manage customer contacts and leads
             </li>
           </ul>
+        </Card>
+
+        {/* Best Practices */}
+        <Card className="card-minimal p-6 bg-gradient-to-br from-accent/10 to-accent/5 border-accent/20">
+          <div className="flex items-start gap-3 mb-4">
+            <BookOpen className="w-6 h-6 text-accent" />
+            <h2 className="text-lg font-semibold text-foreground">
+              Learn Best Practices
+            </h2>
+          </div>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Explore the architectural patterns and coding standards used in BaraaCRM.
+            </p>
+            <Link href="/best-practices">
+              <a>
+                <Button variant="outline" className="w-full gap-2 border-accent/20 hover:bg-accent/10">
+                  View Best Practices
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </a>
+            </Link>
+          </div>
         </Card>
       </div>
     </MainLayout>
