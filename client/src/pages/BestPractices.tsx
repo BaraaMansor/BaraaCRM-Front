@@ -4,10 +4,17 @@
  * Design Philosophy: Teaching-focused with comprehensive examples
  */
 
-import MainLayout from '@/components/MainLayout';
-import { Card } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Code, Database, Layers, Shield, BookOpen, GitBranch } from 'lucide-react';
+import MainLayout from "@/components/MainLayout";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Code,
+  Database,
+  Layers,
+  Shield,
+  BookOpen,
+  GitBranch,
+} from "lucide-react";
 
 export default function BestPractices() {
   return (
@@ -21,11 +28,15 @@ export default function BestPractices() {
           <div className="flex items-start gap-4">
             <BookOpen className="w-8 h-8 text-accent mt-1" />
             <div>
-              <h2 className="text-xl font-semibold mb-2">Design Philosophy: Minimalist Enterprise</h2>
+              <h2 className="text-xl font-semibold mb-2">
+                Design Philosophy: Minimalist Enterprise
+              </h2>
               <p className="text-muted-foreground leading-relaxed">
-                BaraaCRM follows a minimalist enterprise architecture that emphasizes clean code,
-                separation of concerns, and maintainability. This page demonstrates the key patterns
-                and practices used across both frontend (React + TypeScript) and backend (ASP.NET Core 8).
+                BaraaCRM follows a minimalist enterprise architecture that
+                emphasizes clean code, separation of concerns, and
+                maintainability. This page demonstrates the key patterns and
+                practices used across both frontend (React + TypeScript) and
+                backend (ASP.NET Core 8).
               </p>
             </div>
           </div>
@@ -46,10 +57,10 @@ export default function BestPractices() {
               title="API Service Layer Pattern"
               description="Centralized API communication with type-safe responses and consistent error handling"
               points={[
-                'Single source of truth for all API endpoints',
-                'TypeScript interfaces for request/response types',
-                'Custom error handling with ApiError class',
-                'Reusable request helper functions'
+                "Single source of truth for all API endpoints",
+                "TypeScript interfaces for request/response types",
+                "Custom error handling with ApiError class",
+                "Reusable request helper functions",
               ]}
               codeExample={`// Type-safe API service with error handling
 export interface Company {
@@ -119,10 +130,10 @@ export const companyApi = {
               title="Component Composition Pattern"
               description="Clean, reusable components with single responsibility"
               points={[
-                'React functional components with hooks',
-                'Separation of concerns (UI, business logic, data fetching)',
-                'TypeScript for type safety',
-                'Consistent error handling and loading states'
+                "React functional components with hooks",
+                "Separation of concerns (UI, business logic, data fetching)",
+                "TypeScript for type safety",
+                "Consistent error handling and loading states",
               ]}
               codeExample={`export default function Companies() {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -178,10 +189,10 @@ export const companyApi = {
               title="React Context for Global State"
               description="Efficient state management without prop drilling"
               points={[
-                'Context API for application-wide state',
-                'Custom hooks for easy context consumption',
-                'Type-safe context with TypeScript',
-                'LocalStorage integration for persistence'
+                "Context API for application-wide state",
+                "Custom hooks for easy context consumption",
+                "Type-safe context with TypeScript",
+                "LocalStorage integration for persistence",
               ]}
               codeExample={`type Theme = "light" | "dark";
 
@@ -236,10 +247,10 @@ export function useTheme() {
               title="Form Validation & Type Safety"
               description="Client-side validation with TypeScript type checking"
               points={[
-                'TypeScript interfaces for form data',
-                'HTML5 validation attributes',
-                'Consistent form state management',
-                'Toast notifications for user feedback'
+                "TypeScript interfaces for form data",
+                "HTML5 validation attributes",
+                "Consistent form state management",
+                "Toast notifications for user feedback",
               ]}
               codeExample={`interface CreateCompanyDto {
   name: string;
@@ -291,16 +302,54 @@ export default function CompanyForm() {
 
           {/* Backend Tab */}
           <TabsContent value="backend" className="space-y-6">
+            {/* API Endpoints Overview */}
+            <Card className="p-6">
+              <div className="flex items-start gap-4 mb-4">
+                <div className="text-accent">
+                  <Code className="w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-semibold mb-2">
+                    API Endpoints Overview
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    BaraaCRM backend exposes a comprehensive REST API with
+                    endpoints organized by resource. Below are the complete API
+                    routes available in the system.
+                  </p>
+
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-medium mb-3">Available API Routes</h4>
+                      <img
+                        src="/backend routes.png"
+                        alt="Backend API Routes Overview"
+                        className="w-full rounded-lg border border-border shadow-sm"
+                      />
+                    </div>
+
+                    <div className="mt-4">
+                      <img
+                        src="/backend routes 2.png"
+                        alt="Backend API Routes Details"
+                        className="w-full rounded-lg border border-border shadow-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
             {/* Clean Architecture */}
             <PracticeSection
               icon={<Layers className="w-6 h-6" />}
               title="Clean Architecture & Separation of Concerns"
               description="Multi-layer architecture with clear responsibilities"
               points={[
-                'API Layer: Controllers handle HTTP requests/responses',
-                'Service Layer: Business logic and data operations',
-                'Data Layer: Entity Framework Core and database models',
-                'Contracts Layer: DTOs and service interfaces'
+                "API Layer: Controllers handle HTTP requests/responses",
+                "Service Layer: Business logic and data operations",
+                "Data Layer: Entity Framework Core and database models",
+                "Contracts Layer: DTOs and service interfaces",
               ]}
               codeExample={`// Project Structure:
 // BaraaCRM.API         -> Controllers (HTTP layer)
@@ -354,10 +403,10 @@ public class CompanyController : ControllerBase
               title="Dependency Injection"
               description="Loose coupling and testable code with DI container"
               points={[
-                'Constructor injection for dependencies',
-                'Service registration in Program.cs',
-                'Interface-based programming',
-                'Scoped lifetime for database contexts'
+                "Constructor injection for dependencies",
+                "Service registration in Program.cs",
+                "Interface-based programming",
+                "Scoped lifetime for database contexts",
               ]}
               codeExample={`// Program.cs - Service Registration
 var builder = WebApplication.CreateBuilder(args);
@@ -403,10 +452,10 @@ public class CompanyService : ICompanyService
               title="DTO (Data Transfer Object) Pattern"
               description="Clean data contracts between layers"
               points={[
-                'Record types for immutability',
-                'Separate DTOs for create, update, and response',
-                'Explicit mapping from entities to DTOs',
-                'Clear API contracts'
+                "Record types for immutability",
+                "Separate DTOs for create, update, and response",
+                "Explicit mapping from entities to DTOs",
+                "Clear API contracts",
               ]}
               codeExample={`// Domain Entity (Database Model)
 public class Company
@@ -465,10 +514,10 @@ public record CompanyResponseDto(
               title="Async/Await Pattern"
               description="Non-blocking asynchronous operations"
               points={[
-                'All I/O operations are async',
-                'Proper use of async/await keywords',
-                'Entity Framework async methods',
-                'Better scalability and performance'
+                "All I/O operations are async",
+                "Proper use of async/await keywords",
+                "Entity Framework async methods",
+                "Better scalability and performance",
               ]}
               codeExample={`public class CompanyService : ICompanyService
 {
@@ -525,10 +574,10 @@ public record CompanyResponseDto(
               title="CORS Configuration"
               description="Secure cross-origin resource sharing"
               points={[
-                'Explicit origin whitelisting',
-                'Proper header configuration',
-                'Credentials support when needed',
-                'Security-first approach'
+                "Explicit origin whitelisting",
+                "Proper header configuration",
+                "Credentials support when needed",
+                "Security-first approach",
               ]}
               codeExample={`// Program.cs - CORS Configuration
 builder.Services.AddCors(options =>
@@ -566,10 +615,10 @@ builder.Services.AddControllers()
               title="Repository-like Pattern with EF Core"
               description="Clean data access with Entity Framework Core"
               points={[
-                'DbContext as unit of work',
-                'AsNoTracking for read-only queries',
-                'Projection to DTOs in queries',
-                'Soft delete pattern for data retention'
+                "DbContext as unit of work",
+                "AsNoTracking for read-only queries",
+                "Projection to DTOs in queries",
+                "Soft delete pattern for data retention",
               ]}
               codeExample={`public class CompanyService : ICompanyService
 {
@@ -618,7 +667,9 @@ builder.Services.AddControllers()
           <h3 className="text-lg font-semibold mb-4">Key Takeaways</h3>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <h4 className="font-medium mb-2 text-accent">Frontend Principles</h4>
+              <h4 className="font-medium mb-2 text-accent">
+                Frontend Principles
+              </h4>
               <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
                 <li>Type safety with TypeScript</li>
                 <li>Component composition over inheritance</li>
@@ -628,7 +679,9 @@ builder.Services.AddControllers()
               </ul>
             </div>
             <div>
-              <h4 className="font-medium mb-2 text-accent">Backend Principles</h4>
+              <h4 className="font-medium mb-2 text-accent">
+                Backend Principles
+              </h4>
               <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
                 <li>Clean architecture with separation of concerns</li>
                 <li>Dependency injection for loose coupling</li>
@@ -652,7 +705,13 @@ interface PracticeSectionProps {
   codeExample: string;
 }
 
-function PracticeSection({ icon, title, description, points, codeExample }: PracticeSectionProps) {
+function PracticeSection({
+  icon,
+  title,
+  description,
+  points,
+  codeExample,
+}: PracticeSectionProps) {
   return (
     <Card className="p-6">
       <div className="flex items-start gap-4 mb-4">
@@ -660,13 +719,13 @@ function PracticeSection({ icon, title, description, points, codeExample }: Prac
         <div className="flex-1">
           <h3 className="text-xl font-semibold mb-2">{title}</h3>
           <p className="text-muted-foreground mb-4">{description}</p>
-          
+
           <div className="mb-4">
             <h4 className="font-medium mb-2">Key Points:</h4>
             <ul className="space-y-2">
               {points.map((point, index) => (
                 <li key={index} className="flex items-start gap-2">
-                  <span className="text-accent mt-1">•</span>
+                  <span className="text-accent mt-1">ï¿½</span>
                   <span className="text-sm text-muted-foreground">{point}</span>
                 </li>
               ))}
