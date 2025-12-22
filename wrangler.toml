@@ -1,0 +1,21 @@
+# Cloudflare Pages Build Configuration
+
+# This file configures how Cloudflare Pages builds your frontend
+# See: https://developers.cloudflare.com/pages/platform/build-configuration/
+
+# Build command
+build.command = "pnpm run build"
+
+# Output directory
+build.directory = "dist"
+
+# Node version (optional)
+build.environment = { NODE_VERSION = "20" }
+
+# Preview deployments (for pull requests)
+[preview]
+build.command = "pnpm run build"
+
+# Production deployments (main branch)
+[production]
+build.command = "pnpm run build"
