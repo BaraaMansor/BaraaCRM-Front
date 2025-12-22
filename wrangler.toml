@@ -6,7 +6,7 @@
 # Build command
 build.command = "pnpm run build"
 
-# Output directory
+# Output directory (IMPORTANT: Must match vite.config.ts build.outDir)
 build.directory = "dist"
 
 # Node version (optional)
@@ -15,7 +15,9 @@ build.environment = { NODE_VERSION = "20" }
 # Preview deployments (for pull requests)
 [preview]
 build.command = "pnpm run build"
+build.directory = "dist"
 
 # Production deployments (main branch)
 [production]
 build.command = "pnpm run build"
+build.directory = "dist"
